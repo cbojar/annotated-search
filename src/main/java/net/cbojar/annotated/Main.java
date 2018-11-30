@@ -1,6 +1,7 @@
 package net.cbojar.annotated;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -50,6 +51,7 @@ public final class Main {
 			.filter((clazz) -> !clazz.isAnnotation())
 			.filter((clazz) -> !clazz.isEnum())
 			.filter((clazz) -> !clazz.isInterface())
+			.filter((clazz) -> hasAnnotation(MyAnnotation.class, clazz))
 			.map((clazz) -> classWithAnnotations(clazz))
 			.forEach(System.out::println);
 	}
@@ -77,6 +79,11 @@ public final class Main {
 		} catch (final ClassNotFoundException ex) {
 			return Optional.empty();
 		}
+	}
+
+	private static boolean hasAnnotation(
+			final Class<? extends Annotation> annotation, final Class<?> clazz) {
+		return clazz.getAnnotation(annotation) != null;
 	}
 
 	private static String classWithAnnotations(final Class<?> clazz) {
