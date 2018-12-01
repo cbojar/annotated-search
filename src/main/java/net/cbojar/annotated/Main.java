@@ -1,7 +1,7 @@
 package net.cbojar.annotated;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -51,8 +51,12 @@ public final class Main {
 			.filter((clazz) -> !clazz.isAnnotation())
 			.filter((clazz) -> !clazz.isEnum())
 			.filter((clazz) -> !clazz.isInterface())
-			.filter((clazz) -> hasAnnotation(MyAnnotation.class, clazz))
-			.map((clazz) -> classWithAnnotations(clazz))
+			.filter((clazz) -> clazz.isAnnotationPresent(MyTypeAnnotation.class))
+			.peek((clazz) -> System.out.println(classWithAnnotations(clazz)))
+			.map((clazz) -> clazz.getMethods())
+			.flatMap(Arrays::stream)
+			.filter((method) -> method.isAnnotationPresent(MyMethodAnnotation.class))
+			.map((method) -> methodWithAnnotations(method))
 			.forEach(System.out::println);
 	}
 
@@ -81,13 +85,13 @@ public final class Main {
 		}
 	}
 
-	private static boolean hasAnnotation(
-			final Class<? extends Annotation> annotation, final Class<?> clazz) {
-		return clazz.getAnnotation(annotation) != null;
-	}
-
 	private static String classWithAnnotations(final Class<?> clazz) {
 		return String.format("%s: %s",
 			clazz, Arrays.toString(clazz.getAnnotations()));
+	}
+
+	private static String methodWithAnnotations(final Method method) {
+		return String.format("%s: %s",
+			method, Arrays.toString(method.getAnnotations()));
 	}
 }

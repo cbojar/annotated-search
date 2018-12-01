@@ -1,6 +1,14 @@
 package net.cbojar.annotated;
 
-@MyAnnotation
+@MyTypeAnnotation
 public class AnnotatedClass {
-    // Nothing here
+	@MyMethodAnnotation
+	public void m1() {
+		// Do nothing
+	}
+
+	@MyMethodAnnotation
+	public void m2() {
+		// Also do nothing
+	}
 }
